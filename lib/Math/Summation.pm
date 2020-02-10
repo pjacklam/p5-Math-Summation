@@ -8,7 +8,7 @@ use warnings;
 use Carp qw< croak >;
 use Exporter;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our @ISA = qw< Exporter >;
 our @EXPORT = ();
@@ -59,9 +59,7 @@ To import all exportable functions, use the 'all' tag:
 
     use Math::Summation ':all';     # import all fucntions
 
-=head1 CLASS METHODS
-
-=head2 Constructors
+=head1 FUNCTIONS
 
 =over 4
 
@@ -69,6 +67,9 @@ To import all exportable functions, use the 'all' tag:
 
 Returns the sum of the elements in LIST. This is done by naively adding each
 number directly to the accumulating total.
+
+    # use the standard way of adding numbers
+    my $sum = sum(@values);
 
 =cut
 
@@ -89,6 +90,9 @@ sub sum {
 =item kahansum LIST
 
 Returns the sum of the elements in LIST.
+
+    # use the Kahan summation algorithm
+    my $sum_khn = kahansum(@values);
 
 The Kahan summation algorithm, also known as "compensated summation",
 significantly reduces the numerical error in the total obtained by adding a
@@ -125,7 +129,8 @@ sub kahansum {
         # optimizing compilers!
         $sum = $t;
 
-        # Next time around, the lost low part will be added to $y in a fresh attempt.
+        # Next time around, the lost low part will be added to $y in a fresh
+        # attempt.
     }
 
     return $sum;
@@ -137,13 +142,18 @@ sub kahansum {
 
 Returns the sum of the elements in LIST.
 
+    # use the Neumaier summation algorithm
+    my $sum_nmr = neumaiersum(@values);
+
 Neumaier introduced an improved version of the Kahan algorithm, which Neumaier
 calls an "improved Kahan–Babuška algorithm", which also covers the case when
 the next term to be added is larger in absolute value than the running sum,
 effectively swapping the role of what is large and what is small.
 
-The difference between Neumaier's algorithm vs. Kahan's algorithm can be seen
-when summing the four numbers
+The difference between Neumaier's algorithm and Kahan's algorithm can be seen
+when summing the four numbers (1, 1e100, 1, -1e100) with double or quad
+precision. Kahan's algorithm gives 0, but Neumeier's algorithm gives 2, which
+is the correct result.
 
 =cut
 
@@ -174,6 +184,9 @@ sub neumaiersum {
 =item kleinsum LIST
 
 Returns the sum of the elements in LIST.
+
+    # use the Klein summation algorithm
+    my $sum_kln = kleinsum(@values);
 
 Higher-order modifications of the above algorithms, to provide even better
 accuracy are also possible. Klein suggested what he called a second-order
@@ -215,6 +228,9 @@ sub kleinsum {
 =item pairwisesum LIST
 
 Returns the sum of the elements in LIST.
+
+    # use the pairwise summation algorithm
+    my $sum_pws = pairwisesum(@values);
 
 The summation is done by recursively splitting the set in half and computing
 the sum of each half.
@@ -304,7 +320,7 @@ the same terms as Perl itself.
 
 =head1 AUTHOR
 
-Peter John Acklam E<lt>pjacklam (at) gmail.com<gt>.
+Peter John Acklam E<lt>pjacklam (at) gmail.comE<gt>.
 
 =cut
 
